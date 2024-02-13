@@ -1,0 +1,278 @@
+while (emux_launch) 
+    {
+        SDL_Event event;
+        while (SDL_PollEvent(&event)) 
+        {
+
+            switch (event.type) 
+            {
+                break;
+                case SDL_MOUSEBUTTONDOWN:
+                    printf("X %d / Y%d\n", event.button.x, event.button.y);
+                    /*//button A
+                    if(545>event.button.x && event.button.x>515 && 175>event.button.y && event.button.y>145)
+                    {
+                         printf("you are clicked on: A \n");
+                        
+                    }
+                    //end button A
+                    //button B
+                    if(577>event.button.x && event.button.x>547 && 145>event.button.y && event.button.y>115)
+                    {
+                        printf("you are clicked on: B \n");
+                        
+                    }
+                    //end button B
+                    //button X
+                    if(513>event.button.x && event.button.x>483 && 145>event.button.y && event.button.y>115)
+                    {
+                        printf("you are clicked on: X \n");
+                        
+                    }
+                    //end button X          
+                    //button Y
+                    if(545>event.button.x && event.button.x>515 && 115>event.button.y && event.button.y>85)
+                    {
+                        printf("you are clicked on: Y \n");
+                        
+                    }          
+                    //end button Y
+                    //button R1
+                    if(600>event.button.x && event.button.x>495 && 60>event.button.y && event.button.y>20)
+                    {
+                        printf("you are clicked on: R1 \n");
+                        
+                    }
+                    //end button R1
+                    //button R2
+                    if(495>event.button.x && event.button.x>395 && 60>event.button.y && event.button.y>20)
+                    {
+                        printf("you are clicked on: R2 \n");
+                        
+                    }
+                    //end button R2
+                    //button L1
+                    if(205>event.button.x && event.button.x>105 && 60>event.button.y && event.button.y>20)
+                    {
+                        printf("you are clicked on: L1 \n");
+                        
+                    }
+                    //end button L1
+                    //button L2
+                    if(305>event.button.x && event.button.x>205 && 60>event.button.y && event.button.y>20)
+                    {
+                        printf("you are clicked on: L2 \n");
+                        
+                    }
+                    //end button L2
+                    //button menu
+                    if(420>event.button.x && event.button.x>400 && 130>event.button.y && event.button.y>110)
+                    {
+                        printf("you are clicked on: menu \n");
+                        
+                    }
+                    //end button menu
+                    //button change view
+                    if(290>event.button.x && event.button.x>270 && 130>event.button.y && event.button.y>110)
+                    {
+                        printf("you are clicked on: change view \n");
+                        
+                    }
+                    //end button change view
+                    //button touchpad right
+                    if(250>event.button.x && event.button.x>220 && 290>event.button.y && event.button.y>270)
+                    {
+                        printf("you are clicked on: touchpad right \n");
+                        
+                    }
+                    //end button touchpad right
+                    //button touchpad left
+                    if(200>event.button.x && event.button.x>170 && 290>event.button.y && event.button.y>270)
+                    {
+                        printf("you are clicked on: touchpad left \n");
+                        
+                    }
+                    //end button touchpad left
+                    //button touchpad up
+                    if(220>event.button.x && event.button.x>200 && 270>event.button.y && event.button.y>240)
+                    {
+                        printf("you are clicked on: touchpad up \n");
+                        
+                    }                    
+                    //end button touchpad up
+                    //button touchpad down
+                    if(220>event.button.x && event.button.x>200 && 320>event.button.y && event.button.y>290)
+                    {
+                        printf("you are clicked on: touchpad down \n");
+                        
+                    }  
+                    //end button touchpad down
+                    //detect joystick button
+                    if(event.button.x > 420 && event.button.x < 480 && event.button.y > 250 && event.button.y < 310)
+                    {
+                        isStickRightDownClicked = SDL_TRUE;
+                        printf("You clicked on the stick right-down at X location: %d, Y location: %d\n", event.button.x, event.button.y);
+                    }
+                    else
+                        isStickRightDownClicked = SDL_FALSE;
+                    // Check if the mouse is clicked on the stick left-up
+                    if(event.button.x > 150 && event.button.x < 210 && event.button.y > 90 && event.button.y < 150)
+                    {
+                        isStickLeftUpClicked = SDL_TRUE;
+                        printf("You clicked on the stick left-up at X location: %d, Y location: %d\n", event.button.x, event.button.y);
+                    }      
+                    else
+                        isStickLeftUpClicked = SDL_FALSE;
+                    //end detect joystick button
+                    break;
+                case SDL_MOUSEMOTION:
+                    // Check if the mouse is over the stick right-down
+                    if (event.motion.x > 420 && event.motion.x < 480 && event.motion.y > 250 && event.motion.y < 310 && isStickRightDownClicked == SDL_TRUE) 
+                    {
+                        printf("You are moving the stick right-down to X location: %d, Y location: %d\n", event.motion.x, event.motion.y);
+                    }
+                    // Check if the mouse is over the stick left-up
+                    if (event.motion.x > 150 && event.motion.x < 210 && event.motion.y > 90 && event.motion.y < 150 && isStickLeftUpClicked == SDL_TRUE) 
+                    {
+                        printf("You are moving the stick left-up to X location: %d, Y location: %d\n", event.motion.x, event.motion.y);
+                    }*/
+                static int buttonAPressed, buttonBPressed, buttonXPressed, buttonYPressed, buttonstartPressed, buttonDpadLeftPressed, buttonDpadRightPressed, buttonDpadUpPressed, buttonDpadDownPressed;
+                case SDL_JOYBUTTONDOWN:
+                    if (event.jbutton.button == SDL_CONTROLLER_BUTTON_A && !buttonAPressed)
+                    {
+                        printf("Button A pressed\n");
+                        savePixels(renderer, pixels, 515, 145, 545, 175);
+                        drawFilledCircle(renderer, 530, 160, 10);
+                        SDL_RenderPresent(renderer);
+                        buttonAPressed = 1;
+                    }
+
+                    if (event.jbutton.button == SDL_CONTROLLER_BUTTON_B && !buttonBPressed)
+                    {
+                        printf("Button B pressed\n");
+                        savePixels(renderer, pixels, 547, 115, 577, 145);
+                        drawFilledCircle(renderer, 562, 130, 10);
+                        SDL_RenderPresent(renderer);
+                        buttonBPressed = 1;
+                    }
+                    if (event.jbutton.button == SDL_CONTROLLER_BUTTON_X && !buttonXPressed)
+                    {
+                        printf("Button X pressed\n");
+                        savePixels(renderer, pixels, 483, 115, 513, 145);
+                        drawFilledCircle(renderer, 498, 130, 10);
+                        SDL_RenderPresent(renderer);
+                        buttonXPressed = 1;
+                    }
+                    if (event.jbutton.button == SDL_CONTROLLER_BUTTON_Y && !buttonYPressed)
+                    {
+                        printf("Button Y pressed\n");
+                        savePixels(renderer, pixels, 515, 85, 545, 115);
+                        drawFilledCircle(renderer, 530, 100, 10);
+                        SDL_RenderPresent(renderer);
+                        buttonYPressed = 1;
+                    }
+                    if (event.jbutton.button == SDL_CONTROLLER_BUTTON_START && !buttonstartPressed)
+                    {
+                        printf("start Button pressed\n");
+                        savePixels(renderer, pixels, 400, 110, 420, 130);
+                        drawFilledCircle(renderer, 410, 120, 5);
+                        SDL_RenderPresent(renderer);
+                        buttonstartPressed = 1;
+                    }
+                    if (event.jbutton.button == SDL_CONTROLLER_BUTTON_DPAD_LEFT && !buttonDpadLeftPressed)
+                    {
+                        printf("D-Pad Left pressed\n");
+                        // Your code for D-Pad Left
+                        buttonDpadLeftPressed = 1;
+                    }
+                    if (event.jbutton.button == SDL_CONTROLLER_BUTTON_DPAD_RIGHT && !buttonDpadRightPressed)
+                    {
+                        printf("D-Pad Right pressed\n");
+                        // Your code for D-Pad Right
+                        buttonDpadRightPressed = 1;
+                    }
+                    if (event.jbutton.button == SDL_CONTROLLER_BUTTON_DPAD_UP && !buttonDpadUpPressed)
+                    {
+                        printf("D-Pad Up pressed\n");
+                        // Your code for D-Pad Up
+                        buttonDpadUpPressed = 1;
+                    }
+                    if (event.jbutton.button == SDL_CONTROLLER_BUTTON_DPAD_DOWN && !buttonDpadDownPressed)
+                    {
+                        printf("D-Pad Down pressed\n");
+                        // Your code for D-Pad Down
+                        buttonDpadDownPressed = 1;
+                    }
+
+                    break;
+
+                case SDL_JOYBUTTONUP:
+                    if (event.jbutton.button == SDL_CONTROLLER_BUTTON_A && buttonAPressed)
+                    {
+                        printf("Button A released\n");
+                        restorePixels(renderer, pixels, 515, 145, 545, 175);
+                        SDL_RenderPresent(renderer);
+                        buttonAPressed = 0;
+                    }
+                    if (event.jbutton.button == SDL_CONTROLLER_BUTTON_B && buttonBPressed)
+                    {
+                        printf("Button B released\n");
+                        restorePixels(renderer, pixels, 547, 115, 577, 145);
+                        SDL_RenderPresent(renderer);
+                        buttonBPressed = 0;
+                    }
+                    if (event.jbutton.button == SDL_CONTROLLER_BUTTON_X && buttonXPressed)
+                    {
+                        printf("Button X released\n");
+                        restorePixels(renderer, pixels, 483, 115, 513, 145);
+                        SDL_RenderPresent(renderer);
+                        buttonXPressed = 0;
+                    }
+                    if (event.jbutton.button == SDL_CONTROLLER_BUTTON_Y)
+                    {
+                        printf("Button Y released\n");
+                        restorePixels(renderer, pixels, 515, 85, 545, 115);
+                        SDL_RenderPresent(renderer);
+                        buttonYPressed = 0;
+                    }
+                    if (event.jbutton.button == SDL_CONTROLLER_BUTTON_START && buttonstartPressed)
+                    {
+                        printf("start Button released\n");
+                        restorePixels(renderer, pixels, 400, 110, 420, 130);
+                        SDL_RenderPresent(renderer);
+                        buttonstartPressed = 0;
+                    }
+                    if (event.jbutton.button == SDL_CONTROLLER_BUTTON_DPAD_LEFT && buttonDpadLeftPressed)
+                    {
+                        printf("D-Pad Left released\n");
+                        // Your code for releasing D-Pad Left
+                        buttonDpadLeftPressed = 0;
+                    }
+                    if (event.jbutton.button == SDL_CONTROLLER_BUTTON_DPAD_RIGHT && buttonDpadRightPressed)
+                    {
+                        printf("D-Pad Right released\n");
+                        // Your code for releasing D-Pad Right
+                        buttonDpadRightPressed = 0;
+                    }
+                    if (event.jbutton.button == SDL_CONTROLLER_BUTTON_DPAD_UP && buttonDpadUpPressed)
+                    {
+                        printf("D-Pad Up released\n");
+                        // Your code for releasing D-Pad Up
+                        buttonDpadUpPressed = 0;
+                    }
+                    if (event.jbutton.button == SDL_CONTROLLER_BUTTON_DPAD_DOWN && buttonDpadDownPressed)
+                    {
+                        printf("D-Pad Down released\n");
+                        // Your code for releasing D-Pad Down
+                        buttonDpadDownPressed = 0;
+                    }
+
+                    break;
+                case SDL_QUIT:
+                    emux_launch = SDL_FALSE;
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
