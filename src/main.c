@@ -45,6 +45,18 @@ void drawFilledCircle(SDL_Renderer* renderer, int centerX, int centerY, int radi
         }
     }
 }
+void drawFilledCircleWithColor(SDL_Renderer* renderer, int centerX, int centerY, int radius, SDL_Color color)
+{
+    for (int y = -radius; y <= radius; y++) {
+        for (int x = -radius; x <= radius; x++) {
+            if (x*x + y*y <= radius*radius) {
+                SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+                SDL_RenderDrawPoint(renderer, centerX + x, centerY + y);
+            }
+        }
+    }
+}
+
 Uint32* savedPixels = NULL;
 void savePixels(SDL_Renderer* renderer, Uint32* pixels, int x_start, int y_start, int x_end, int y_end) {
     int width = x_end - x_start;
@@ -86,8 +98,60 @@ void handleTouchpadGesture(float deltaX, float deltaY) {
         printf("Up gesture detected\n");
     }
 }
+int handleJoystickleft(SDL_Joystick *joystick) {
+    // Get the number of axes of the joystick
+    int numAxes = SDL_JoystickNumAxes(joystick);
+    
+    // Assuming the joystick has at least two axes (left/right and up/down)
+    if (numAxes >= 2) {
+        // Get the position of the X and Y axes
+        Sint16 xAxis = SDL_JoystickGetAxis(joystick, 0);
+        Sint16 yAxis = SDL_JoystickGetAxis(joystick, 1);
+        
+        // Determine movement direction based on the axes' values
+        if (xAxis < -10000) {
+            return 3;//left
+        } else if (xAxis > 10000) {
+            return 2;//right
+        }
+        
+        if (yAxis < -10000) {
+            return 1;//up
+        } else if (yAxis > 10000) {
+            return 0;//down
+        }
+    }
+}
+int handleJoystickRight(SDL_Joystick *joystick) 
+{
+    // Get the number of axes of the joystick
+    int numAxes = SDL_JoystickNumAxes(joystick);
+    
+    // Assuming the joystick has at least two axes (left/right and up/down)
+    if (numAxes >= 2) {
+        // Get the position of the X and Y axes
+        Sint16 xAxis = SDL_JoystickGetAxis(joystick, 2); // Assuming X-axis for right joystick is at index 2
+        Sint16 yAxis = SDL_JoystickGetAxis(joystick, 3); // Assuming Y-axis for right joystick is at index 3
+        
+        // Determine movement direction based on the axes' values
+        if (xAxis < -10000) {
+            return 3; // left
+        } else if (xAxis > 10000) {
+            return 2; // right
+        }
+        
+        if (yAxis < -10000) {
+            return 1; // up
+        } else if (yAxis > 10000) {
+            return 0; // down
+        }
+    }
+    // Return -1 if no movement or insufficient axes
+    return -1;
+}
 int main(int argc, char **argv)
 {
+
     SDL_Window *window = NULL;
     SDL_Renderer *renderer = NULL;
     SDL_Rect cu;
@@ -457,9 +521,46 @@ int main(int argc, char **argv)
     Uint32* pixels_R3 = (Uint32*)malloc(windowWidth * windowHeight * sizeof(Uint32));
     if (pixels == NULL) 
         exit_with_error("Failed to allocate memory");
+    Uint32* pixels_JOY_L_DOWN = (Uint32*)malloc(windowWidth * windowHeight * sizeof(Uint32));
+    if (pixels == NULL) 
+        exit_with_error("Failed to allocate memory");
+    Uint32* pixels_JOY_L_UP = (Uint32*)malloc(windowWidth * windowHeight * sizeof(Uint32));
+    if (pixels == NULL) 
+        exit_with_error("Failed to allocate memory");
+    Uint32* pixels_JOY_L_RIGHT = (Uint32*)malloc(windowWidth * windowHeight * sizeof(Uint32));
+    if (pixels == NULL) 
+        exit_with_error("Failed to allocate memory");
+    Uint32* pixels_JOY_L_LEFT = (Uint32*)malloc(windowWidth * windowHeight * sizeof(Uint32));
+    if (pixels == NULL) 
+        exit_with_error("Failed to allocate memory");
+    Uint32* pixels_JOY_R_UP = (Uint32*)malloc(windowWidth * windowHeight * sizeof(Uint32));
+    if (pixels == NULL) 
+        exit_with_error("Failed to allocate memory");
+    Uint32* pixels_JOY_R_DOWN = (Uint32*)malloc(windowWidth * windowHeight * sizeof(Uint32));
+    if (pixels == NULL) 
+        exit_with_error("Failed to allocate memory");
+    Uint32* pixels_JOY_R_LEFT = (Uint32*)malloc(windowWidth * windowHeight * sizeof(Uint32));
+    if (pixels == NULL) 
+        exit_with_error("Failed to allocate memory");
+    Uint32* pixels_JOY_R_RIGHT = (Uint32*)malloc(windowWidth * windowHeight * sizeof(Uint32));
+    if (pixels == NULL) 
+        exit_with_error("Failed to allocate memory");
+    //save pixel for joystick left
+    savePixels(renderer, pixels_JOY_L_UP, 174, 94, 186, 106);//up
+    savePixels(renderer, pixels_JOY_L_DOWN, 174, 134, 186, 146);//down
+    savePixels(renderer, pixels_JOY_L_RIGHT, 194, 115, 206, 126);//right
+    savePixels(renderer, pixels_JOY_L_LEFT, 154, 115, 166, 126);//left
+    //end save pixel for joystick left
+    //save pixel for joystick right
+    savePixels(renderer, pixels_JOY_R_UP, 444, 254, 456, 266);//up
+    savePixels(renderer, pixels_JOY_R_DOWN, 444, 294, 456, 306);//down
+    savePixels(renderer, pixels_JOY_R_RIGHT, 464, 274, 476, 286);//right
+    savePixels(renderer, pixels_JOY_R_LEFT, 424, 274, 436, 286);//left
+    //end save pixel for joystick right
     SDL_RenderPresent(renderer);
     int running = 1;
-    while (running) {
+    while (running) 
+    {
         // Handle events
         while (SDL_PollEvent(&event) != 0) 
         {
@@ -468,16 +569,117 @@ int main(int argc, char **argv)
                 case SDL_MOUSEBUTTONDOWN:
                     printf("X %d / Y%d\n", event.button.x, event.button.y);
                     break;
+                case SDL_JOYAXISMOTION:
+                    if(handleJoystickleft(joystick)==0)
+                    {
+                        drawFilledCircle(renderer, 180, 140, 5);
+                        SDL_RenderPresent(renderer);
+                    }
+                    else
+                    {
+                        restorePixels(renderer, pixels_JOY_L_DOWN, 174, 134, 186, 146);
+                        SDL_RenderPresent(renderer);
+                    }
+                    if(handleJoystickleft(joystick)==1)
+                    {
+                        drawFilledCircle(renderer, 180, 100, 5);
+                        SDL_RenderPresent(renderer);
+                    }
+                    else
+                    {
+                        restorePixels(renderer, pixels_JOY_L_UP, 174, 94, 186, 106);
+                        SDL_RenderPresent(renderer);
+                    }
+                    if(handleJoystickleft(joystick)==2)
+                    {
+                        drawFilledCircle(renderer, 200, 120, 5);
+                        SDL_RenderPresent(renderer);
+                    }
+                    else
+                    {
+                        restorePixels(renderer, pixels_JOY_L_RIGHT, 194, 115, 206, 126);
+                        SDL_RenderPresent(renderer);                        
+                    }
+
+                    if(handleJoystickleft(joystick)==3)
+                    {
+                        drawFilledCircle(renderer, 160, 120, 5);
+                        SDL_RenderPresent(renderer);
+                    }
+                    else
+                    {
+                        restorePixels(renderer, pixels_JOY_L_LEFT, 154, 115, 166, 126);
+                        SDL_RenderPresent(renderer);
+                    }
+                    break;
             }
-            if (event.type == SDL_QUIT) {
+            if (event.type == SDL_QUIT)
                 running = 0;
-            }                
-            else if (event.type == SDL_CONTROLLERBUTTONDOWN) 
+            if (event.type == SDL_JOYAXISMOTION) 
+            {
+                int direction = handleJoystickRight(joystick);
+                if(direction==0) 
+                {
+                    drawFilledCircle(renderer, 450, 300, 5);
+                    SDL_RenderPresent(renderer);
+                }
+                else
+                {
+                    restorePixels(renderer, pixels_JOY_R_DOWN, 444, 294, 456, 306);
+                    SDL_RenderPresent(renderer);                    
+                }
+                if(direction==1)
+                {
+                    drawFilledCircle(renderer, 450, 260, 5);
+                    SDL_RenderPresent(renderer);
+                }
+                else
+                {
+                    restorePixels(renderer, pixels_JOY_R_UP, 444, 254, 456, 266);
+                    SDL_RenderPresent(renderer);                      
+                }
+                if(direction==2)
+                {
+                    drawFilledCircle(renderer, 470, 280, 5);
+                    SDL_RenderPresent(renderer);
+                }
+                else
+                {
+                    restorePixels(renderer, pixels_JOY_R_RIGHT, 464, 274, 476, 286);
+                    SDL_RenderPresent(renderer);  
+                }
+                if(direction==3)
+                {
+                    drawFilledCircle(renderer, 430, 280, 5);
+                    SDL_RenderPresent(renderer);
+                }
+                else
+                {
+                    restorePixels(renderer, pixels_JOY_R_LEFT, 424, 274, 436, 286);
+                    SDL_RenderPresent(renderer);                      
+                }
+                if(SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_TRIGGERRIGHT)>0)
+                {
+                    Uint8 colorValue = (Uint8)(SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_TRIGGERRIGHT) *255);
+                    SDL_Color color_R2 = {colorValue, colorValue, colorValue, 255};
+                    drawFilledCircleWithColor(renderer, 475, 40, 10, color_R2);
+                    if(SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE) != 0)
+                        exit_with_error("error to change color 02");
+                }
+                if(SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_TRIGGERLEFT)>0)
+                {
+                    Uint8 colorValue = (Uint8)(SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_TRIGGERLEFT) *255);
+                    SDL_Color color_L2 = {colorValue, colorValue, colorValue, 255};
+                    drawFilledCircleWithColor(renderer, 223, 40, 10, color_L2);
+                    if(SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE) != 0)
+                        exit_with_error("error to change color 03");
+                }
+            }
+            if (event.type == SDL_CONTROLLERBUTTONDOWN) 
             {
                 switch (event.cbutton.button) 
                 {
                     printf("Button pressed: %d\n", event.cbutton.button);
-                
                     case SDL_CONTROLLER_BUTTON_A:
                         printf("Button A pressed\n");
                         savePixels(renderer, pixels_A, 515, 145, 545, 175);
@@ -665,5 +867,4 @@ int main(int argc, char **argv)
     free(pixels);
     return 0;
 }
-
-//gcc src/main.c -o bin/emux.exe -I include -L lib -lmingw32 -lSDL2main -lSDL2
+//gcc src/main.c -o bin/gamepad_tester.exe -I include -L lib -lmingw32 -lSDL2main -lSDL2
